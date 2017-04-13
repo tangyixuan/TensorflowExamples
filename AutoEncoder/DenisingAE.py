@@ -10,7 +10,7 @@ def xavier_init(fan_in, fan_out, constant = 1):
     return tf.random_uniform([fan_in, fan_out], minval = low, maxval = high, dtype = tf.float32)
 
 class AddictiveGaussianNoiseAutoEncoder(object):
-    def _initialize_weights():
+    def _initialize_weights(self):
         all_weights = dict()
 
         all_weights['w1'] = tf.Variable(xavier_init(self.n_input, self.n_hidden))
@@ -56,11 +56,11 @@ class AddictiveGaussianNoiseAutoEncoder(object):
     def calc_total_cost(self,X):
         return self.sess.run(self.cost, feed_dict={self.x:X, self.scale: self.training_scale})
 
-    # encode using learnt weights
+    # encode using learned weights
     def transform(self, X):
         return self.sess.run(self.hidden, feed_dict = {self.x:X, self.scale:self.training_scale})
 
-    # decode using learnt wights
+    # decode using learned weights
     def generate(self, hidden = None):
         if hidden is None:
             hidden = np.random.normal(size = self.weights["b1"])
@@ -77,3 +77,13 @@ class AddictiveGaussianNoiseAutoEncoder(object):
         return self.sess.run(self.weights['b1'])
 
 # run on MNIST data
+mnist = input_data.read_data_sets('../data/MNIST/', one_hot=True)
+
+agn_ae = AddictiveGaussianNoiseAutoEncoder(mnist.train.images.shape[1], 64)
+
+for i in range(10000):
+    batch_sx, batch_sy = mnist.train.next_batch(100)
+    cost = agn_ae.partial_fit(batch_sx)
+    if i%50==0:
+        print "epoch", i, "loss", cost
+    

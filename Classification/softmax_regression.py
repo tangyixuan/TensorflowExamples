@@ -6,7 +6,7 @@ Can reach accuracy: 91.8%
 
 from tensorflow.examples.tutorials.mnist import input_data
 
-mnist = input_data.read_data_sets("../data/MNIST_data/", one_hot=True)
+mnist = input_data.read_data_sets("../data/MNIST/", one_hot=True)
 # 55k train, 10k test, 5k validation
 print mnist.train.images.shape, mnist.train.labels.shape
 print mnist.test.images.shape, mnist.test.labels.shape
